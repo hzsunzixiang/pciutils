@@ -2,7 +2,7 @@
 # (c) 1998--2020 Martin Mares <mj@ucw.cz>
 
 OPT=-O2
-CFLAGS=$(OPT) -Wall -W -Wno-parentheses -Wstrict-prototypes -Wmissing-prototypes
+CFLAGS=$(OPT) -Wall -W -Wno-parentheses -Wstrict-prototypes -Wmissing-prototypes -g
 
 VERSION=3.7.0
 DATE=2020-05-31
@@ -59,7 +59,7 @@ PCIINC_INS=lib/config.h lib/header.h lib/pci.h lib/types.h
 
 export
 
-all: lib/$(PCILIB) lspci lspcicaps setpci example pciheader lspci.8 setpci.8 pcilib.7 pci.ids.5 update-pciids update-pciids.8 $(PCI_IDS)
+all: lib/$(PCILIB) lspci lspcicaps setpci example pcibars pciheader lspci.8 setpci.8 pcilib.7 pci.ids.5 update-pciids update-pciids.8 $(PCI_IDS)
 
 lib/$(PCILIB): $(PCIINC) force
 	$(MAKE) -C lib all
@@ -94,6 +94,10 @@ update-pciids: update-pciids.sh
 # The example of use of libpci
 example: example.o lib/$(PCILIB)
 example.o: example.c $(PCIINC)
+
+# pcibars
+pcibars: pcibars.o lib/$(PCILIB)
+pcibars.o: pcibars.c $(PCIINC)
 
 # pciheader
 pciheader: pciheader.o lib/$(PCILIB)
