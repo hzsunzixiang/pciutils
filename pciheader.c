@@ -214,7 +214,7 @@ void int_2_hexstr(u32 value, unsigned int size, char *destination) {
 
 	/* Copy value in string */
 	while((value > 0) && (i>1)){
-		destination[i] = letters[(value % 0xf)];
+		destination[i] = letters[(value & 0xf)];
 		value = value >> 4;
 		i--;
 	}
