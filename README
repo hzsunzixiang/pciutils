@@ -1,3 +1,9 @@
+Information
+~~~~~~~~~~~
+
+This is my fork of the pciutils (see original README below). I have added three example applications to show how to use the pcilib. If you want more information check out my [videos and playlist](https://www.youtube.com/watch?v=E3p0DXmRSV4&list=PLCGpd0Do5-I1hZpk8zi9Zh7SCnHrIQlgT) about GNU/Linux and PCI (Express).
+
+
 This package contains the PCI Utilities, version @VERSION@.
 
 Copyright (c) 1997--2020 Martin Mares <mj@ucw.cz>
