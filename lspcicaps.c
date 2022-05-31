@@ -158,6 +158,10 @@ void print_all_capabilities(struct pci_dev *dev) {
 			return;
 		}
 
+		/* Capability Pointer  -- 34H
+		 * PCI Capability ID
+		 * Next Capability Pointer 
+		 */
 		if(cap_id > 0x15) 
 			cap_id = 0x16;
 		printf("ID: 0x%x - %s\n", cap_id, pci_caps[cap_id]);
@@ -178,9 +182,13 @@ void print_all_capabilities(struct pci_dev *dev) {
 		 * Bit 19:16 Capability Version Number
 		 * Bit 31:20 Next Capability Offset
 		 */
-		pcie_cap_id = pci_read_long(dev, next_ptr);
+		pcie_cap_id = pci_read_long(dev, next_ptr);  // 64 bits
+		printf("pcie_cap_id: %d.\n", pcie_cap_id);
+
 		next_ptr = pcie_cap_id >> 20;
-		cap_id = pcie_cap_id & 0xff;
+		// 注意这里是offset， 所以用移位
+		// * Bit 31:20 Next Capability Offset
+		cap_id = pcie_cap_id & 0xff;  //  8bit
 		if(cap_id > 0x2c)
 			cap_id = 0x2d;
 		printf("ID: 0x%x - %s\n", cap_id, pcie_caps[cap_id]);
