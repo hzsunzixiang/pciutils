@@ -50,6 +50,7 @@ const char *pcie_caps[] = {
 	"Root Complex Event Collector Endpoint Association",
 	"Multi-Function Virtual Channel",
 	"Virtual Channel",
+	"Root Complex Register Block", 
 	"Vendor Specific Extended Capability",
 	"Configuration Access Correlation",
 	"Access Control Services",
@@ -183,16 +184,41 @@ void print_all_capabilities(struct pci_dev *dev) {
 		 * Bit 31:20 Next Capability Offset
 		 */
 		pcie_cap_id = pci_read_long(dev, next_ptr);  // 64 bits
-		printf("pcie_cap_id: %d.\n", pcie_cap_id);
+		printf("pcie_cap_id: 32bit: %d.\n", pcie_cap_id);
 
 		next_ptr = pcie_cap_id >> 20;
-		// 注意这里是offset， 所以用移位
-		// * Bit 31:20 Next Capability Offset
+		printf("next_ptr: %d.\n", next_ptr);
+		// 去除最低的 16位就是 cap_id
 		cap_id = pcie_cap_id & 0xff;  //  8bit
+		printf("pcie_cap_id: 16bit: %d.\n", pcie_cap_id);
+
+		// 这样可以获取 4 位的 Capability Version Number
+		int cap_version= pcie_cap_id & 0xf00;  //  8bit
+		printf("cap_version: 4bit: %d.\n", cap_version);
 		if(cap_id > 0x2c)
 			cap_id = 0x2d;
 		printf("ID: 0x%x - %s\n", cap_id, pcie_caps[cap_id]);
 	} while(next_ptr);
+
+	/**
+	  关于移位的说明
+      # 这里一次性取出了 32bits, 同时包含了以下3个信息: 其中31:20 也就是最后12个bit，是标识 Next Capability
+		pcie_cap_id = pci_read_long(dev, next_ptr);  // 64 bits
+		 * Bit 15:0 PCI Express Capability ID
+		 * Bit 19:16 Capability Version Number
+		 * Bit 31:20 Next Capability Offset
+
+	  比如，如果读出来是 0x31010018
+	  (gdb) print 0x31010018 >> 20
+	  $2 = 784
+	  二进制: 00110001000000010000000000011000
+
+	  移位 20 ，就把最后的12位取出来，就是 001100010000 = 0x310 = 784
+      # 这是一个实际的例子
+      ID: 0x19 - Protocol Mulitplexing
+      pcie_cap_id: 822149144.
+      next_ptr: 784
+	  **/
 }
 
 int main(int argc, char *argv[])
