@@ -183,7 +183,7 @@ void print_all_capabilities(struct pci_dev *dev) {
 		 * Bit 19:16 Capability Version Number
 		 * Bit 31:20 Next Capability Offset
 		 */
-		pcie_cap_id = pci_read_long(dev, next_ptr);  // 64 bits
+		pcie_cap_id = pci_read_long(dev, next_ptr);  // 32 bits
 		printf("pcie_cap_id: 32bit: %d.\n", pcie_cap_id);
 
 		next_ptr = pcie_cap_id >> 20;
