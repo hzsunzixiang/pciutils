@@ -71,7 +71,7 @@ void print_bar_info(struct pci_dev *dev){
 		bar_limit = 2;
 
 	for(i=0;i<bar_limit; i++){
-		bars[i].addr = pci_read_long(dev, PCI_BASE_ADDRESS_0 + 4*i);
+		bars[i].addr = pci_read_long(dev, PCI_BASE_ADDRESS_0 + 4*i); // 32bits
 
 		/* Is BAR used */
 		if(bars[i].addr == 0){
@@ -88,9 +88,13 @@ void print_bar_info(struct pci_dev *dev){
 			/* IO BAR */
 			bars[i].type = 1;
 
+			printf("reg_val :%0x\n", reg_val);
 			reg_val &= ~(1);			/* Clear first bit */
+			printf("reg_val after reg_val &= ~(1) :%0x\n", reg_val);
 			reg_val = ~(reg_val);			/* Invert value */
+			printf("reg_val after reg_val = ~(reg_val):%0x\n", reg_val);
 			reg_val += 1;				/* Add one to get size in bytes*/
+			printf("reg_val after reg_val += 1:%0x\n", reg_val);
 			get_bar_size(reg_val, &bars[i]);	/* Convert size */
 
 			/* Write Address back */
@@ -103,6 +107,10 @@ void print_bar_info(struct pci_dev *dev){
 			/* Is prefetchable? */
 			bars[i].prefetchable = (reg_val & (1<<3)) > 0;
 
+			/* 
+			   * 3<<1 左移一位 获取 第1和2位
+			   * 求值，再右移
+			 */
 			if(((reg_val & (3<<1))>>1) == 2){
 				/* 64 bit BAR */
 				bars[i].addr = bars[i].addr + ( (u64) pci_read_long(dev, PCI_BASE_ADDRESS_0 + 4*i+4) << 32);
@@ -123,9 +131,14 @@ void print_bar_info(struct pci_dev *dev){
 				/* 32 bit BAR */
 				bars[i].type = 3;
 
+			    printf("reg_val :%0x\n", reg_val);
 				reg_val &= ~(0xf);			/* Clear frst 4 bits */
+    			printf("reg_val after reg_val &= ~(0xf) :%0x\n", reg_val);
+
 				reg_val= ~(reg_val);			/* Invert value */
+			    printf("reg_val after reg_val= ~(reg_val):%0x\n", reg_val);
 				reg_val += 1;				/* Add one to get the size in bytes */
+			    printf("reg_val after reg_val += 1:%0x\n", reg_val);
 				get_bar_size(reg_val, &bars[i]);	/* Convert size */
 
 				/* Write Address back */

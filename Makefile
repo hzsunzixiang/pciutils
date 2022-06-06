@@ -59,7 +59,7 @@ PCIINC_INS=lib/config.h lib/header.h lib/pci.h lib/types.h
 
 export
 
-all: lib/$(PCILIB) lspci lspcicaps setpci example pcibars pciheader lspci.8 setpci.8 pcilib.7 pci.ids.5 update-pciids update-pciids.8 $(PCI_IDS)
+all: lib/$(PCILIB) lspci lspcicaps setpci example pcibars pciheader gpiocard lspci.8 setpci.8 pcilib.7 pci.ids.5 update-pciids update-pciids.8 $(PCI_IDS)
 
 lib/$(PCILIB): $(PCIINC) force
 	$(MAKE) -C lib all
@@ -106,6 +106,10 @@ pciheader.o: pciheader.c $(PCIINC)
 # lspcicaps
 lspcicaps: lspcicaps.o lib/$(PCILIB)
 lspcicaps.o: lspcicaps.c $(PCIINC)
+
+# gpiocard 
+gpiocard: gpiocard.o lib/$(PCILIB)
+gpiocard.o: gpiocard.c $(PCIINC)
 
 %: %.o
 	$(CC) $(LDFLAGS) $(TARGET_ARCH) $^ $(LDLIBS) -o $@
